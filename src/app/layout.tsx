@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: { default: "WordPress Log Analyzer | LogScope", template: "%s | LogScope" },
   description: "Analyze WordPress access and error logs in your browser. Find suspicious requests, PHP fatal errors, top IPs and paths, then inspect the supporting log lines.",
   applicationName: "LogScope",
+  verification: { google: "NkaRsOj5K4MzvK2Yun0otP3LTs6Kyf9KeHgbQ3K1Xf0" },
   robots: { index: true, follow: true },
   openGraph: { type: "website", siteName: "LogScope", title: "WordPress Log Analyzer | LogScope", description: "Investigate WordPress access, security, and error logs with evidence-backed findings.", url: siteOrigin || undefined },
   twitter: { card: "summary", title: "WordPress Log Analyzer | LogScope", description: "Understand suspicious requests, fatal errors, and traffic in WordPress logs." },
