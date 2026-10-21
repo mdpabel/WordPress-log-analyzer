@@ -1,0 +1,7 @@
+node_modules/
+.next/
+out/
+public/analyzer-worker.js
+*.tsbuildinfo
+.env*
+!.env.example

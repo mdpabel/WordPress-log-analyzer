@@ -1,0 +1,20 @@
+export const demoLog = `203.0.113.42 - - [21/Oct/2026:09:00:03 +0000] "GET / HTTP/1.1" 200 12450 "-" "Mozilla/5.0"
+203.0.113.42 - - [21/Oct/2026:09:00:08 +0000] "GET /shop/ HTTP/1.1" 200 9870 "-" "Mozilla/5.0"
+198.51.100.17 - - [21/Oct/2026:09:01:01 +0000] "POST /wp-login.php HTTP/1.1" 200 3251 "-" "python-requests/2.31"
+198.51.100.17 - - [21/Oct/2026:09:01:04 +0000] "POST /wp-login.php HTTP/1.1" 200 3251 "-" "python-requests/2.31"
+198.51.100.17 - - [21/Oct/2026:09:01:07 +0000] "POST /wp-login.php HTTP/1.1" 200 3251 "-" "python-requests/2.31"
+198.51.100.17 - - [21/Oct/2026:09:01:10 +0000] "POST /wp-login.php HTTP/1.1" 200 3251 "-" "python-requests/2.31"
+198.51.100.17 - - [21/Oct/2026:09:01:13 +0000] "POST /xmlrpc.php HTTP/1.1" 200 128 "-" "python-requests/2.31"
+198.51.100.17 - - [21/Oct/2026:09:01:16 +0000] "POST /xmlrpc.php HTTP/1.1" 200 128 "-" "python-requests/2.31"
+198.51.100.17 - - [21/Oct/2026:09:01:19 +0000] "POST /xmlrpc.php HTTP/1.1" 200 128 "-" "python-requests/2.31"
+198.51.100.17 - - [21/Oct/2026:09:01:22 +0000] "POST /xmlrpc.php HTTP/1.1" 200 128 "-" "python-requests/2.31"
+192.0.2.66 - - [21/Oct/2026:09:08:00 +0000] "GET /.env HTTP/1.1" 404 182 "-" "curl/8.0"
+192.0.2.66 - - [21/Oct/2026:09:08:02 +0000] "GET /wp-config.php HTTP/1.1" 403 153 "-" "curl/8.0"
+192.0.2.66 - - [21/Oct/2026:09:08:04 +0000] "GET /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php HTTP/1.1" 404 182 "-" "curl/8.0"
+192.0.2.66 - - [21/Oct/2026:09:08:06 +0000] "GET /wp-content/uploads/shell.php HTTP/1.1" 404 182 "-" "curl/8.0"
+203.0.113.42 - - [21/Oct/2026:09:15:14 +0000] "GET /checkout/ HTTP/1.1" 500 0 "https://example.com/cart/" "Mozilla/5.0"
+203.0.113.42 - - [21/Oct/2026:09:15:17 +0000] "POST /wp-admin/admin-ajax.php HTTP/1.1" 500 0 "https://example.com/checkout/" "Mozilla/5.0"
+203.0.113.43 - - [21/Oct/2026:09:15:29 +0000] "GET /checkout/ HTTP/1.1" 500 0 "https://example.com/cart/" "Mozilla/5.0"
+[21-Oct-2026 09:15:14 UTC] PHP Fatal error: Allowed memory size of 268435456 bytes exhausted in /home/site/public_html/wp-content/plugins/sample-checkout/includes/checkout.php on line 184
+[21-Oct-2026 09:15:17 UTC] PHP Fatal error: Allowed memory size of 268435456 bytes exhausted in /home/site/public_html/wp-content/plugins/sample-checkout/includes/checkout.php on line 184
+[21-Oct-2026 09:15:29 UTC] PHP Fatal error: Allowed memory size of 268435456 bytes exhausted in /home/site/public_html/wp-content/plugins/sample-checkout/includes/checkout.php on line 184`;
