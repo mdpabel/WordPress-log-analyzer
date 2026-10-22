@@ -54,15 +54,15 @@ The project exports a static website to `out/`:
 npm run build
 ```
 
-For a public deployment, set `SITE_URL` to the site's canonical HTTPS origin before building. This adds canonical URLs and populates `sitemap.xml` and `robots.txt`. `CONTACT_EMAIL` is optional and adds a contact link to the site.
+The production build reads `SITE_URL` from `.env.production`. It sets canonical URLs and populates `sitemap.xml` and `robots.txt`. Keep the value aligned with the production domain. For a hosting provider that builds from source, add the same variable in its build environment because `.env.production` is ignored by Git. `CONTACT_EMAIL` is optional and adds a contact link to the site.
 
 ```powershell
-$env:SITE_URL="https://your-domain.example"
+$env:SITE_URL="https://logscope.mdpabel.com"
 $env:CONTACT_EMAIL="hello@your-domain.example"
 npm run build
 ```
 
-Replace the examples with your actual domain and contact address. Deploy the contents of `out/` to static hosting that serves directory index pages over HTTPS. Without `SITE_URL`, the site can still be built for local preview, but the sitemap has no absolute URLs.
+Replace the contact address with a real one if you want to display it. Deploy the contents of `out/` to static hosting that serves directory index pages over HTTPS. Without `SITE_URL`, the site can still be built for local preview, but the sitemap has no absolute URLs. `.env.example` lists the public build variables.
 
 ## Add a guide
 

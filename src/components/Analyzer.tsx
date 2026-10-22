@@ -5,6 +5,7 @@ import type { Analysis, Finding, LogEvent } from "@/lib/analyzer";
 import { matchesInvestigation, type ActivityFilter } from "@/lib/investigation";
 import { demoLog } from "@/lib/demo";
 import { buildResponse } from "@/lib/report";
+import { trackEvent } from "@/lib/analytics";
 
 const PAGE_SIZE = 25;
 
@@ -22,6 +23,7 @@ function saveFile(name: string, content: string, type: string): void {
   link.href = url;
   link.download = name;
   link.click();
+  trackEvent(type === "text/csv" ? "log_lines_downloaded" : "report_downloaded", { format: type === "text/csv" ? "csv" : "markdown" });
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
@@ -94,6 +96,7 @@ export default function Analyzer() {
   function addFiles(incoming: FileList | File[]): void {
     const selected = Array.from(incoming);
     if (!selected.length) return;
+    trackEvent("logs_files_selected", { file_count: Math.min(selected.length, 12 - files.length) });
     if (files.length + selected.length > 12) setError("You can analyze up to 12 files at once.");
     else setError("");
     setFiles(current => [...current, ...selected].slice(0, 12));
@@ -104,6 +107,11 @@ export default function Analyzer() {
     if (!text.trim() && !files.length) { setError("Choose a log file or paste log text first."); return; }
     const offset = timezoneOffset.trim();
     if (offset && !/^[+-](?:0\d|1[0-4]):[0-5]\d$/.test(offset)) { setError("Use a timezone offset like +06:00, or leave it blank."); return; }
+    trackEvent("logs_analysis_started", {
+      input_type: demo ? "sample" : files.length && text.trim() ? "files_and_paste" : files.length ? "files" : "paste",
+      file_count: demo ? 0 : files.length,
+      has_timezone: Boolean(offset),
+    });
     const assumedOffsetMinutes = offset ? (Number(offset.slice(1, 3)) * 60 + Number(offset.slice(4, 6))) * (offset[0] === "+" ? 1 : -1) : null;
     worker.current?.terminate();
     setBusy(true);
@@ -115,8 +123,20 @@ export default function Analyzer() {
     instance.onmessage = (message: MessageEvent<{ type: string; analysis?: Analysis; message?: string }>) => {
       const result = message.data;
       if (result.type === "progress") setProgress(result.message || "Analyzing…");
-      if (result.type === "error") { setError(result.message || "Analysis failed."); setBusy(false); instance.terminate(); }
+      if (result.type === "error") {
+        trackEvent("logs_analysis_failed", { stage: "worker" });
+        setError(result.message || "Analysis failed."); setBusy(false); instance.terminate();
+      }
       if (result.type === "result" && result.analysis) {
+        trackEvent("logs_analysis_completed", {
+          parsed_records: result.analysis.parsedCount,
+          access_records: result.analysis.accessCount,
+          error_records: result.analysis.errorCount,
+          finding_count: result.analysis.findings.length,
+          priority_findings: result.analysis.findings.filter(finding => finding.severity === "critical" || finding.severity === "high").length,
+          truncated: result.analysis.truncated,
+          skipped_lines: result.analysis.skippedLines,
+        });
         setAnalysis(result.analysis);
         setBusy(false);
         setShowRecords(false);
@@ -127,11 +147,15 @@ export default function Analyzer() {
         window.setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
       }
     };
-    instance.onerror = () => { setError("The analyzer could not start. Refresh the page and try again."); setBusy(false); instance.terminate(); };
+    instance.onerror = () => {
+      trackEvent("logs_analysis_failed", { stage: "worker_start" });
+      setError("The analyzer could not start. Refresh the page and try again."); setBusy(false); instance.terminate();
+    };
     instance.postMessage({ files: demo ? [] : files, pasted: text, assumedOffsetMinutes });
   }
 
   function startOver(): void {
+    trackEvent("new_analysis_started");
     worker.current?.terminate();
     setAnalysis(null);
     setFiles([]);
@@ -144,6 +168,7 @@ export default function Analyzer() {
   }
 
   function showEvidence(finding: Finding | null): void {
+    trackEvent("evidence_viewed", { scope: finding ? "finding" : "all" });
     setSelectedFinding(finding);
     setShowRecords(true);
     clearRecordFilters();
@@ -156,10 +181,12 @@ export default function Analyzer() {
   }
 
   function traceIp(ip: string): void {
+    trackEvent("ip_trace_viewed");
     inspectTop("ip", ip);
   }
 
   function inspectTop(field: "ip" | "path" | "userAgent" | "status", value: string): void {
+    trackEvent("traffic_breakdown_viewed", { dimension: field });
     setSelectedFinding(null);
     setShowRecords(true);
     clearRecordFilters();
@@ -177,7 +204,9 @@ export default function Analyzer() {
     try {
       const { downloadReportPdf } = await import("@/lib/pdf-report");
       await downloadReportPdf(analysis);
+      trackEvent("report_downloaded", { format: "pdf" });
     } catch {
+      trackEvent("report_download_failed", { format: "pdf" });
       setError("Could not create the PDF. Please try again.");
     } finally {
       setPdfBusy(false);

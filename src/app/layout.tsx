@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { siteOrigin } from "@/lib/site";
 import "./globals.css";
@@ -15,5 +16,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><div className="site"><a className="skip-link" href="#main-content">Skip to content</a><SiteHeader /><main id="main-content">{children}</main><SiteFooter /></div></body></html>;
+  return <html lang="en"><body><Script defer src="https://cloud.umami.is/script.js" data-website-id="1164842e-c34f-4d53-ab93-8489fa24289c" /><div className="site"><a className="skip-link" href="#main-content">Skip to content</a><SiteHeader /><main id="main-content">{children}</main><SiteFooter /></div></body></html>;
 }
